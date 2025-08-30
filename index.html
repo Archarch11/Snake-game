@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Retro Snake Game</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="game-container">
+        <div class="crt-screen">
+            <div class="screen-content">
+                <div class="score">0000</div>
+                <div class="score-line"></div>
+                <div class="pause-btn">II Pause</div>
+                <canvas id="gameCanvas" width="400" height="300"></canvas>
+                <div class="glossy-reflection"></div>
+                <div class="inner-glow"></div>
+                <div class="vignette"></div>
+                <div class="start-screen" id="startScreen">
+                    <div class="start-text">Ready?</div>
+                    <div class="start-subtext">Press WASD or the arrow keys to begin</div>
+                </div>
+                <div class="pause-menu" id="pauseMenu">
+                    <div class="menu-header">
+                        <span>Menu</span>
+                        <button class="close-btn" id="closeBtn">×</button>
+                    </div>
+                    <div class="menu-option selected" data-action="continue">Continue</div>
+                    <div class="menu-option" data-action="newgame">New game</div>
+                    <div class="menu-option" data-action="quit">Quit</div>
+                </div>
+                <div class="quit-confirmation" id="quitConfirm">
+                    <div class="confirm-text">Are you sure you want to quit?</div>
+                    <div class="confirm-buttons">
+                        <button class="confirm-btn" id="yesQuit">Yes</button>
+                        <button class="confirm-btn" id="noQuit">No</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="game.js"></script>
+</body>
+</html>
