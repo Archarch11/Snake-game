@@ -5,7 +5,9 @@ class SnakeGame {
         this.startScreen = document.getElementById('startScreen');
         this.pauseMenu = document.getElementById('pauseMenu');
         this.quitConfirm = document.getElementById('quitConfirm');
+        this.gameOverScreen = document.getElementById('gameOverScreen');
         this.scoreElement = document.querySelector('.score');
+        this.gameOverScoreElement = document.querySelector('.game-over-score');
         this.pauseBtn = document.querySelector('.pause-btn');
         
         // Game constants
@@ -30,7 +32,7 @@ class SnakeGame {
         
         // Game loop
         this.lastTime = 0;
-        this.gameSpeed = 150; // milliseconds between moves
+        this.gameSpeed = 250; // milliseconds between moves (slower)
         
         this.init();
     }
@@ -65,6 +67,15 @@ class SnakeGame {
     bindEvents() {
         // Keyboard controls
         document.addEventListener('keydown', (e) => {
+            if (this.gameOver) {
+                // Handle game over state - any movement key restarts
+                if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'w', 'W', 'a', 'A', 's', 'S', 'd', 'D'].includes(e.key)) {
+                    this.restartGame();
+                    return;
+                }
+                return;
+            }
+            
             if (!this.gameStarted) {
                 this.startGame();
                 return;
@@ -148,11 +159,13 @@ class SnakeGame {
         this.startScreen.classList.remove('hidden');
         this.pauseMenu.classList.add('hidden');
         this.quitConfirm.classList.add('hidden');
+        this.gameOverScreen.classList.add('hidden');
     }
     
     startGame() {
         this.gameStarted = true;
         this.startScreen.classList.add('hidden');
+        this.gameOverScreen.classList.add('hidden');
         this.direction = {x: 1, y: 0};
         this.nextDirection = {x: 1, y: 0};
         this.gamePaused = false;
@@ -161,6 +174,17 @@ class SnakeGame {
         this.updateScore();
         this.snake = [{x: 10, y: 10}];
         this.food = this.generateFood();
+    }
+    
+    showGameOverScreen() {
+        this.gameOverScreen.style.display = 'block';
+        this.gameOverScoreElement.textContent = `Your Score: ${this.score.toString().padStart(4, '0')}`;
+    }
+    
+    restartGame() {
+        this.gameOver = false;
+        this.gameStarted = false;
+        this.showStartScreen();
     }
     
     togglePause() {
@@ -276,9 +300,10 @@ class SnakeGame {
         if (head.y < 0) head.y = this.gridHeight - 1;
         if (head.y >= this.gridHeight) head.y = 0;
         
-        // Check collision with self
-        if (this.snake.some(segment => segment.x === head.x && segment.y === head.y)) {
+        // Check collision with self (excluding the current head)
+        if (this.snake.some((segment, index) => index !== 0 && segment.x === head.x && segment.y === head.y)) {
             this.gameOver = true;
+            this.showGameOverScreen();
             return;
         }
         
@@ -298,7 +323,7 @@ class SnakeGame {
     
     drawGrid() {
         // Set grid line style - much more subtle
-        this.ctx.strokeStyle = 'rgba(74, 74, 74, 0.08)';
+        this.ctx.strokeStyle = 'rgba(74, 74, 74, 0.15)';
         this.ctx.lineWidth = 0.5;
         
         // Draw vertical grid lines
@@ -322,7 +347,7 @@ class SnakeGame {
         // Clear canvas
         this.ctx.clearRect(0, 0, this.canvasWidth, this.canvasHeight);
         
-        if (!this.gameStarted) return;
+        if (!this.gameStarted || this.gameOver) return;
         
         // Draw grid
         this.drawGrid();
